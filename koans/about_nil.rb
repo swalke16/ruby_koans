@@ -18,7 +18,7 @@ class AboutNil < EdgeCase::Koan
     #  in a sandbox and catching the error class into the exception
     #  variable.  
     #
-    exception = assert_raise(___) do
+    exception = assert_raise(NoMethodError) do
       nil.some_method_nil_doesnt_know_about
     end
     
@@ -26,13 +26,13 @@ class AboutNil < EdgeCase::Koan
     #  What is the error message itself? What substring or pattern could 
     #  you test against in order to have a good idea what the string is?
     #  
-    assert_match /__/, exception.message
+    assert_match /undefined method/, exception.message
   end
 
   def test_nil_has_a_few_methods_defined_on_it
-    assert_equal __, nil.nil?
-    assert_equal __, nil.to_s
-    assert_equal __, nil.inspect
+    assert_equal true, nil.nil?
+    assert_equal "", nil.to_s
+    assert_equal "nil", nil.inspect
 
     # THINK ABOUT IT:
     #
@@ -41,6 +41,10 @@ class AboutNil < EdgeCase::Koan
     # or
     #    obj == nil
     # Why?
+    
+    # I'd say it's better to use obj == nil.  Nil being of type object has an identifier assigned like any other object. 
+    #This would mean that the == operator could optimize to compare the two objects by ID which would likely be more 
+    # efficient than calling a method on the object.
   end
 
 end
