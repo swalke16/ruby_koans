@@ -30,7 +30,48 @@ require 'edgecase'
 # Your goal is to write the score method.
 
 def score(dice)
-  # You need to write this method
+  count_digits(dice).inject(0){ |score, item| score + score_for_digit(item[0],item[1]) }
+end
+
+def count_digits(dice)
+  digit_counts = {1=>0,2=>0,3=>0,4=>0,5=>0,6=>0}
+  dice.each{ |item|
+      digit_counts[item] += 1
+    }
+    
+  return digit_counts
+end
+
+def score_for_digit(digit, count)
+  score=0
+
+  if count >= 3
+    score += triple_digit_score(digit) + sum_digit_score(digit, count-3)
+  else
+    score += sum_digit_score(digit, count)
+  end
+
+puts digit.to_s + " " + count.to_s + " " + score.to_s
+
+  return score
+end
+
+def triple_digit_score(digit)
+  if digit == 1
+    1000
+  else
+    digit * 100
+  end
+end
+
+def sum_digit_score(digit, count)
+  if digit == 1
+    count*100
+  elsif digit == 5
+    count*50
+  else
+    0
+  end
 end
 
 class AboutScoringAssignment < EdgeCase::Koan
@@ -67,7 +108,13 @@ class AboutScoringAssignment < EdgeCase::Koan
   end
 
   def test_score_of_mixed_is_sum
-    assert_equal 50, score([2,5,2,2,3])
+    #assert_equal 50, score([2,5,2,2,3])
+    # I believe the original code had a bug here... Shouldn't the above assert be asserting a 
+    # score of 250? 
+    #3x2s = 100*2 = 200
+    #1x5   = 50
+    #Total: 250
+    assert_equal 250, score([2,5,2,2,3])
     assert_equal 550, score([5,5,5,5])
   end
 
