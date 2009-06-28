@@ -14,31 +14,28 @@
 #   about_triangle_project_2.rb
 #
 def triangle(a, b, c)
-  unless side_lengths_define_valid_triangle(a,b,c)
+  unless side_lengths_define_valid_triangle?(a,b,c)
       raise TriangleError, "The specified side lengths do not define a valid triangle!"
   end
   
-  if is_equilateral(a,b,c)
+  if is_equilateral?(a,b,c)
     return :equilateral 
-  end
-  
-  if is_isosceles(a,b,c)
+  elsif is_isosceles?(a,b,c)
     return :isosceles
-  end
-  
-  if is_scalene(a,b,c)
+  elsif is_scalene?(a,b,c)
     return :scalene
+  else
+    raise "something got screwed up big time!"
   end
-  
 end
 
 #   :equilateral  if all sides are equal
-def is_equilateral(a,b,c)
+def is_equilateral?(a,b,c)
   return (a==b and b==c)
 end
 
 #   :isosceles    if exactly 2 sides are equal
-def is_isosceles(a,b,c)
+def is_isosceles?(a,b,c)
   if (a==b and b!=c) || (a!=b and a==c) || (a!=b and b==c)
     return true
   else
@@ -47,7 +44,7 @@ def is_isosceles(a,b,c)
 end
 
 #   :scalene      if no sides are equal
-def is_scalene(a,b,c)
+def is_scalene?(a,b,c)
   if a!=b and a!=c and b!=c
     return true
   else
@@ -56,7 +53,7 @@ def is_scalene(a,b,c)
 end
 
 # checks to see if the side lengths can possibly define a triangle
-def side_lengths_define_valid_triangle(a,b,c)  
+def side_lengths_define_valid_triangle?(a,b,c)  
   # side length can not be zero or less
   if a<=0 or b<=0 or c<=0 
     return false 

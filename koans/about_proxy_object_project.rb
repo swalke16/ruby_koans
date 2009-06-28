@@ -12,10 +12,36 @@ require 'edgecase'
 # missing handler and any other supporting methods.  The specification
 # of the Proxy class is given in the AboutProxyObjectProject koan.
 
-class Proxy
+# This implementation records all calls made in order they were called, including duplicates.
+# If this functionality is not needed I could change the implementation to only record distinct
+# calls.
+class Proxy 
   def initialize(target_object)
     @object = target_object
+    @messages = []
   end
+  
+  def method_missing(method_name, *args, &block)
+    if @object.respond_to?(method_name)
+      @messages << method_name
+      @object.send(method_name, *args, &block)
+    else
+      super(method_name, *args, &block)
+    end
+  end  
+     
+  def called?(method_name)
+    @messages.select {|item| item == method_name}.length > 0
+  end
+  
+  def number_of_times_called(method_name)
+    @messages.inject(0) {|sum, item| item == method_name ? sum+1 : sum+0}
+  end
+  
+  def messages
+    @messages.uniq
+  end
+  
 end
 
 # The proxy object should pass the following Koan:

@@ -51,8 +51,6 @@ def score_for_digit(digit, count)
     score += sum_digit_score(digit, count)
   end
 
-puts digit.to_s + " " + count.to_s + " " + score.to_s
-
   return score
 end
 
