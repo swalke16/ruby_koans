@@ -13,8 +13,9 @@ require 'edgecase'
 # of the Proxy class is given in the AboutProxyObjectProject koan.
 
 # This implementation records all calls made in order they were called, including duplicates.
-# If this functionality is not needed I could change the implementation to only record distinct
-# calls.
+# If for whatever reason we were only interested in recording distinct calls and their counts regardless of order,
+# I would change the implementation of messages to a hash of method_name=>call_count. 
+# The exact requirements were unclear from the spec so I went with my initial implementation.
 class Proxy 
   def initialize(target_object)
     @object = target_object

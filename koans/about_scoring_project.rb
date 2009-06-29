@@ -34,7 +34,7 @@ def score(dice)
 end
 
 def count_digits(dice)
-  digit_counts = {1=>0,2=>0,3=>0,4=>0,5=>0,6=>0}
+  digit_counts = Hash.new(0)
   dice.each{ |item|
       digit_counts[item] += 1
     }
