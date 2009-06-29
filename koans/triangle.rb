@@ -19,11 +19,11 @@ def triangle(a, b, c)
   end
   
   if is_equilateral?(a,b,c)
-    return :equilateral 
+    :equilateral 
   elsif is_isosceles?(a,b,c)
-    return :isosceles
+    :isosceles
   elsif is_scalene?(a,b,c)
-    return :scalene
+    :scalene
   else
     raise "something got screwed up big time!"
   end
