@@ -1,0 +1,6 @@
+class GreedGame
+
+
+
+
+end
