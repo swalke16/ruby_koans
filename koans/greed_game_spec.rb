@@ -56,8 +56,7 @@ describe GreedGame, "when playing the game"   do
   end
 
   it "should display warning message and stop immediately if less than two players have been established" do
-    @io_device.should_receive(:write_output).once.with(/2 or more/)
-    @io_device.should_receive(:write_output).once.with(/establish players/)
+    @io_device.should_receive(:write_output).once.with(/2 or more players/)
     @scorekeeper.should_receive(:players).at_least.once.and_return([""])
     @game.play()
   end
@@ -110,7 +109,7 @@ describe GreedGameTurn, "when first created" do
   end
 end
 
-describe GreedGameTurn, "when turn is not complete" do
+describe GreedGameTurn, "when turn is being played" do
   before( :each ) do
     @io_device = flexmock("fake io device")
     @scorekeeper = flexmock("fake scorekeeper", :kind_of? => :ScoreKeeper)    
@@ -121,48 +120,40 @@ describe GreedGameTurn, "when turn is not complete" do
     @io_device.should_receive(:write_output).with(/tom's turn!/).once.ordered(:outputs)
     @io_device.should_receive(:write_output).with_any_args.ordered(:outputs)
     @io_device.should_receive(:get_input).returns("")
-    @turn.is_not_complete?(@io_device)
+    @turn.play(@io_device)
   end
 
   it "should prompt player to roll dice" do
     @io_device.should_receive(:write_output)
     @io_device.should_receive(:write_output).with(/"Roll dice?/).ordered(:outputs)
     @io_device.should_receive(:get_input).returns("")
-    @turn.is_not_complete?(@io_device)
+    @turn.play(@io_device)
   end
 
   it "should finish when all dice are scoring dice" do
     @io_device.should_receive(:write_output, :get_input).with_any_args.zero_or_more_times.and_return("y")
     @scorekeeper.should_receive(:score_roll).once.with_any_args.and_return([500,0])
-    while @turn.is_not_complete?(@io_device) do
-      # wait for turn to end
-    end
+    @turn.play(@io_device)
   end
 
   it "should finish when player chooses not to roll more dice" do
     @io_device.should_receive(:write_output)
     @io_device.should_receive(:get_input).twice.and_return("y", "n")
     @scorekeeper.should_receive(:score_roll).once.with_any_args.and_return([500,2])
-    while @turn.is_not_complete?(@io_device) do
-       # wait for turn to end
-    end
+    @turn.play(@io_device)
   end
 
   it "should have score equal to sum of scores from all rolls during turn" do
   @io_device.should_receive(:write_output, :get_input).with_any_args.zero_or_more_times.and_return("y")
     @scorekeeper.should_receive(:score_roll).times(3).with_any_args.and_return([500,2], [250,1], [250,0])
-    while @turn.is_not_complete?(@io_device) do
-       # wait for turn to end
-    end
+    @turn.play(@io_device)
     @turn.score.should eql(1000)
   end
 
   it "should finish when player rolls a dice score of zero and score for entire turn should be zero" do
     @io_device.should_receive(:write_output, :get_input).with_any_args.zero_or_more_times.and_return("y")
     @scorekeeper.should_receive(:score_roll).once.with_any_args.and_return([0,5])
-    while @turn.is_not_complete?(@io_device) do
-       # wait for turn to end
-    end
+    @turn.play(@io_device)
     @turn.score.should eql(0)
   end
 

@@ -1,4 +1,3 @@
-#TODO: test
 class GreedGame
   def initialize(io_device, scorekeeper)
     raise ArgumentError, "IO device cannot be nil!" if io_device == nil
@@ -11,9 +10,10 @@ class GreedGame
   end
 
   def establish_players()
-    @io_device.write_output "\nWelcome to the game of Greed!"
-    @io_device.write_output "\nPlease enter player names, or a blank name to stop creating players.\n\n"
-    @io_device.write_output "Enter player #{@scorekeeper.players.length + 1} name:"
+    @io_device.write_output %{
+Welcome to the game of Greed!
+Please enter player names, or a blank name to stop creating players.
+Enter player #{@scorekeeper.players.length + 1} name:}
     player_name = @io_device.get_input
     while player_name != ""
       @scorekeeper.add_player(player_name.chomp)
@@ -24,8 +24,9 @@ class GreedGame
 
   def play()
     if @scorekeeper.players.length < 2
-      @io_device.write_output "\nTo play this game you must have 2 or more players!"
-      @io_device.write_output "Please establish players before starting a game.\n\n"
+      @io_device.write_output %{
+To play this game you must have 2 or more players!
+Please establish players before starting a game.\n\n}
       return
     end
 
@@ -42,10 +43,10 @@ The game is now entering the final round in which all players except #{leading_p
     }
     give_all_players_a_turn_unless {|player_name| player_name == leading_player}
 
-
     # display game summary info  
-    @io_device.write_output "The game has now ended!"
-    @io_device.write_output @scorekeeper.score_summary
+    @io_device.write_output %{
+The game has now ended!
+#{@scorekeeper.score_summary}}
   end
 
   private
@@ -53,9 +54,7 @@ The game is now entering the final round in which all players except #{leading_p
     @scorekeeper.players.each do |player_name|
       if !unless_predicate.call(player_name)
         turn = @scorekeeper.turn_is_starting_for(player_name)
-        while turn.is_not_complete?(@io_device) do
-          # wait for turn to end
-        end
+        turn.play(@io_device)
         @scorekeeper.turn_is_ending_for(player_name, turn)
       end
     end
@@ -80,7 +79,7 @@ class GreedGameTurn
     @dice = dice
   end
 
-  def is_not_complete?(io_device)
+  def play(io_device)
     non_scoring_dice = 5
 
     while non_scoring_dice > 0 && player_chooses_to_roll_again?(io_device, non_scoring_dice)
@@ -176,7 +175,7 @@ class ScoreKeeper
 
   def score_summary
     leading_player = @players.inject {|lead, player| player.score > lead.score ? player : lead}
-    @players.inject("\n\nGame Summary:\n") do |text, player|
+    @players.inject("Game Summary:\n") do |text, player|
        text << "#{player.name} scored: #{player.score} points."
        text << " -- WINNER!" if player == leading_player
        text << "\n"
