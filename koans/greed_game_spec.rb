@@ -46,44 +46,69 @@ describe GreedGame, "when establishing players" do
   end
 end
 
-describe GreedGame, "when playing the game"   do
+describe GreedGame, "when playing the game with less than two players established" do
+  it "should display warning message and stop immediately" do
+    io_device = flexmock("FakeIO")
+    io_device.should_receive(:respond_to?).once.with(:get_input).and_return(true)
+    io_device.should_receive(:respond_to?).once.with(:write_output).and_return(true)
+    scorekeeper = flexmock("fake scorekeeper", :kind_of? => ScoreKeeper)
+    io_device.should_receive(:write_output).once.with(/2 or more players/)
+    scorekeeper.should_receive(:players).at_least.once.and_return([""])
+    game = GreedGame.new io_device, scorekeeper
+
+    game.play()
+  end
+end
+
+describe GreedGame, "when playing the game with three players tom, dick, and harry"   do
   before(:each) do
     @io_device = flexmock("FakeIO")
     @io_device.should_receive(:respond_to?).once.with(:get_input).and_return(true)
     @io_device.should_receive(:respond_to?).once.with(:write_output).and_return(true)
     @scorekeeper = flexmock("fake scorekeeper", :kind_of? => ScoreKeeper)
+    @scorekeeper.should_receive(:players).at_least.once.and_return(["tom", "dick", "harry"])
+    @turn = flexmock("fake turn", :play=>nil)
     @game = GreedGame.new @io_device, @scorekeeper
   end
 
-  it "should display warning message and stop immediately if less than two players have been established" do
-    @io_device.should_receive(:write_output).once.with(/2 or more players/)
-    @scorekeeper.should_receive(:players).at_least.once.and_return([""])
+  it "should give every player a turn to roll until a player has a winning score (>= 3000)" do
+    @scorekeeper.should_receive(:player_has_winning_score?).and_return(nil,nil,nil,nil,"tom")
+    @scorekeeper.should_receive(:turn_is_starting_for).at_least.once.with("tom").and_return(@turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_ending_for).at_least.once.with("tom", @turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_starting_for).at_least.once.with("dick").and_return(@turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_ending_for).at_least.once.with("dick", @turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_starting_for).at_least.once.with("harry").and_return(@turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_ending_for).at_least.once.with("harry", @turn).ordered(:turns)
+    @io_device.should_receive(:write_output).once.with(/tom has scored greater than 3000/)
+    @io_device.should_receive(:write_output).zero_or_more_times
+    @scorekeeper.should_ignore_missing
+
     @game.play()
   end
 
-  it "should give every player a turn to roll until player scores >= 3000 then every player other than that player should have on more turn in final round" do    
-# This test is very hard to write, need to understand flexmock better... 
-#    @io_device.should_receive(:get_input).at_least.once.and_return("y")
-#    turn = flexmock("fake turn", :is_not_complete? => false)
-#    @scorekeeper.should_receive(:player_has_winning_score?).at_least.once.and_return(nil)
+  it "should give every player other than the leading player one more turn once a player has a winning score (>= 3000)" do
+    @scorekeeper.should_receive(:player_has_winning_score?).and_return("tom")
+    @scorekeeper.should_receive(:turn_is_starting_for).never.with("tom").and_return(@turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_ending_for).never.with("tom", @turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_starting_for).once.with("dick").and_return(@turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_ending_for).once.with("dick", @turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_starting_for).once.with("harry").and_return(@turn).ordered(:turns)
+    @scorekeeper.should_receive(:turn_is_ending_for).once.with("harry", @turn).ordered(:turns)
+    @scorekeeper.should_ignore_missing
+    @io_device.should_ignore_missing
 
-#    @scorekeeper.should_receive(:players).at_least.once.and_return(["tom", "dick", "harry"])
-#    @scorekeeper.should_receive(:turn_is_starting_for).once.with("tom").and_return(turn).ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_ending_for).once.with("tom", turn).ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_starting_for).once.with("dick").and_return(turn).ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_ending_for).once.with("dick", turn).ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_starting_for).once.with("harry").and_return(turn).ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_ending_for).once.with("harry", turn).ordered(:turns)
-#    @scorekeeper.should_receive(:player_has_winning_score?).at_least.once.and_return("tom").ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_starting_for).once.with("dick").and_return(turn).ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_ending_for).once.with("dick", turn).ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_starting_for).once.with("harry").and_return(turn).ordered(:turns)
-#    @scorekeeper.should_receive(:turn_is_ending_for).once.with("harry", turn).ordered(:turns)
-#    @io_device.should_receive(:write_output).zero_or_more_times.ordered
-#    @scorekeeper.should_receive(:score_summary).once.and_return("fake summary").ordered
-#    @io_device.should_receive(:write_output).once.with("fake summary")
+    @game.play()
+  end
 
-#    @game.play()
+  it "should output score summary on game completion" do
+    @scorekeeper.should_receive(:player_has_winning_score?).and_return("tom")
+    @scorekeeper.should_receive(:turn_is_starting_for).zero_or_more_times.and_return(@turn)
+    @scorekeeper.should_ignore_missing
+    @scorekeeper.should_receive(:score_summary).once.and_return("fake summary")
+    @io_device.should_receive(:write_output).once.with(/tom has scored greater than 3000/)
+    @io_device.should_receive(:write_output).once.with(/fake summary/)
+
+    @game.play()
   end
 end
 
