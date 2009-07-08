@@ -49,6 +49,12 @@ class AboutDiceSet < EdgeCase::Koan
     # If the rolls are random, then it is possible (although not
     # likely) that two consecutive rolls are equal.  What would be a
     # better way to test this.
+    #
+    # As the rand function is only a PRNG based off of a seed value we
+    # ce could possibly expose the seed value as a parameter. Using srand
+    # we could set the seed for the rand call producing a predictable sequence of
+    # random numbers. Given that we can then know what the sequence would be we
+    # could ensure that two consecutive rolls were unique.
   end
 
   def test_you_can_roll_different_numbers_of_dice

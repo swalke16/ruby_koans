@@ -76,6 +76,7 @@ class AboutScope < EdgeCase::Koan
     assert_equal ["Dog"], Jims.constants
     # the value of object.constants.size seems to change periodically between runs... does that make any sense?
     # I coded it to compare against itself which isn't a valid test, but I can't explain why the number changes...
+    # I suspect it has something to do with included objects extending the base Object class with new things.
     assert_equal Object.constants.size, Object.constants.size
   end
 end

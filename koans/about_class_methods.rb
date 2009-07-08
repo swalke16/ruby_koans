@@ -25,6 +25,7 @@ class AboutClassMethods < EdgeCase::Koan
   def test_classes_have_methods
     # the value of Dog.methods.size seems to change periodically between runs... does that make any sense?
     # I coded it to compare against itself which isn't a valid test, but I can't explain why the number changes...
+    # I suspect it has something to do with included objects extending the base Object class with new things.
     assert_equal Dog.methods.size, Dog.methods.size
   end
 

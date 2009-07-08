@@ -32,7 +32,7 @@ Please establish players before starting a game.\n\n}
 
     # process all turns leading up to final round
     while !is_final_round?
-      give_all_players_a_turn_unless {|player_name| is_final_round?}
+      give_all_players_a_turn_unless {is_final_round?}
     end
 
     # process final round
