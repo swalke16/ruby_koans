@@ -22,10 +22,8 @@ def triangle(a, b, c)
     :equilateral 
   elsif is_isosceles?(a,b,c)
     :isosceles
-  elsif is_scalene?(a,b,c)
-    :scalene
   else
-    raise "something got screwed up big time!"
+    :scalene
   end
 end
 
@@ -37,15 +35,6 @@ end
 #   :isosceles    if exactly 2 sides are equal
 def is_isosceles?(a,b,c)
   if (a==b and b!=c) || (a!=b and a==c) || (a!=b and b==c)
-    return true
-  else
-    return false
-  end
-end
-
-#   :scalene      if no sides are equal
-def is_scalene?(a,b,c)
-  if a!=b and a!=c and b!=c
     return true
   else
     return false
