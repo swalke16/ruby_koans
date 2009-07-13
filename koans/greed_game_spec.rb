@@ -7,27 +7,26 @@ end
 
 describe GreedGame, "when first created" do
   it "should be created" do
-    game = GreedGame.new flexmock(:get_input=>"", :write_output=>""), flexmock( :kind_of? => ScoreKeeper )
+    game = GreedGame.new flexmock(:get_input=>"", :write_output=>""), flexmock("fake scorekeeper")
     game.should_not be_nil
   end
 
   it "should raise ArgumentError if io_device is nil" do
-    lambda { GreedGame.new nil, flexmock( :kind_of? => ScoreKeeper )}.should raise_error(ArgumentError, /nil/)
+    lambda { GreedGame.new nil, flexmock("fake scorekeeper")}.should raise_error(ArgumentError, /nil/)
   end
 
   it "should raise ArgumentError if io_device does not respond to get_input" do
     io_device = flexmock(:write_output=>"")
-    lambda { GreedGame.new io_device, flexmock( :kind_of? => ScoreKeeper ) }.should raise_error(ArgumentError, /get_input/)
+    lambda { GreedGame.new io_device, flexmock("fake scorekeeper") }.should raise_error(ArgumentError, /get_input/)
   end
 
   it "should raise ArgumentError if io_device does not respond to write_output" do
     io_device = flexmock(:get_input=>"")
-    lambda { GreedGame.new io_device, flexmock( :kind_of? => ScoreKeeper ) }.should raise_error(ArgumentError, /write_output/)
+    lambda { GreedGame.new io_device, flexmock("fake scorekeeper") }.should raise_error(ArgumentError, /write_output/)
   end
 
-  it "should raise ArgumentError if scorekeeper is nil or not kind_of? ScoreKeeper" do
+  it "should raise ArgumentError if scorekeeper is nil" do
     lambda { GreedGame.new flexmock(:get_input=>"", :write_output=>""), nil }.should raise_error(ArgumentError, /scorekeeper can not be nil/)
-    lambda { GreedGame.new flexmock(:get_input=>"", :write_output=>""), Object.new }.should raise_error(ArgumentError, /scorekeeper can not be nil/)
   end
 end
 
@@ -35,7 +34,7 @@ describe GreedGame, "when establishing players" do
   it "should prompt for player names until no names entered and add players to scorekeeper" do
     io_device = flexmock("FakeIO", :write_output=>"")
     io_device.should_receive(:get_input).with_no_args.and_return("tom", "dick", "harry", "")
-    scorekeeper = flexmock( :kind_of? => ScoreKeeper)
+    scorekeeper = flexmock("fake scorekeeper")
     scorekeeper.should_receive(:add_player).once.with("tom").ordered
     scorekeeper.should_receive(:add_player).once.with("dick").ordered
     scorekeeper.should_receive(:add_player).once.with("harry").ordered
@@ -51,7 +50,7 @@ describe GreedGame, "when playing the game with less than two players establishe
     io_device = flexmock("FakeIO")
     io_device.should_receive(:respond_to?).once.with(:get_input).and_return(true)
     io_device.should_receive(:respond_to?).once.with(:write_output).and_return(true)
-    scorekeeper = flexmock("fake scorekeeper", :kind_of? => ScoreKeeper)
+    scorekeeper = flexmock("fake scorekeeper")
     io_device.should_receive(:write_output).once.with(/2 or more players/)
     scorekeeper.should_receive(:players).at_least.once.and_return([""])
     game = GreedGame.new io_device, scorekeeper
@@ -65,7 +64,7 @@ describe GreedGame, "when playing the game with three players tom, dick, and har
     @io_device = flexmock("FakeIO")
     @io_device.should_receive(:respond_to?).once.with(:get_input).and_return(true)
     @io_device.should_receive(:respond_to?).once.with(:write_output).and_return(true)
-    @scorekeeper = flexmock("fake scorekeeper", :kind_of? => ScoreKeeper)
+    @scorekeeper = flexmock("fake scorekeeper")
     @scorekeeper.should_receive(:players).at_least.once.and_return(["tom", "dick", "harry"])
     @turn = flexmock("fake turn", :play=>nil)
     @game = GreedGame.new @io_device, @scorekeeper
@@ -113,23 +112,20 @@ describe GreedGame, "when playing the game with three players tom, dick, and har
 end
 
 describe GreedGameTurn, "when first created" do
-  it "should raise ArgumentError if player is nil or not kind_of? Player" do
-    lambda { GreedGameTurn.new nil, flexmock(:kind_of? => :ScoreKeeper), flexmock(:kind_of? => :DiceSet) }.should raise_error(ArgumentError, /player can not be nil/)
-    lambda { GreedGameTurn.new Object.new, flexmock(:kind_of? => :ScoreKeeper), flexmock(:kind_of? => :DiceSet) }.should raise_error(ArgumentError, /player can not be nil/)
+  it "should raise ArgumentError if player is nil" do
+    lambda { GreedGameTurn.new nil, flexmock("fake scorekeeper"), flexmock("fake dice") }.should raise_error(ArgumentError, /player can not be nil/)
   end
 
-  it "should raise ArgumentError if scorekeeper is nil or not kind_of? ScoreKeeper" do
-    lambda { GreedGameTurn.new flexmock(:kind_of? => :Player), nil, flexmock(DiceSet) }.should raise_error(ArgumentError, /scorekeeper can not be nil/)
-    lambda { GreedGameTurn.new flexmock(:kind_of? => :Player), Object.new, flexmock(DiceSet) }.should raise_error(ArgumentError, /scorekeeper can not be nil/)
+  it "should raise ArgumentError if scorekeeper is nil" do
+    lambda { GreedGameTurn.new flexmock("fake player"), nil, flexmock("fake dice") }.should raise_error(ArgumentError, /scorekeeper can not be nil/)
   end
 
-  it "should raise ArgumentError if dice are nil or not kind_of? DiceSet" do
-    lambda { GreedGameTurn.new flexmock(:kind_of? => :Player), flexmock(:kind_of? => :ScoreKeeper), nil }.should raise_error(ArgumentError, /dice can not be nil/)
-    lambda { GreedGameTurn.new flexmock(:kind_of? => :Player), flexmock(:kind_of? => :ScoreKeeper), Object.new }.should raise_error(ArgumentError, /dice can not be nil/)
+  it "should raise ArgumentError if dice are nil" do
+    lambda { GreedGameTurn.new flexmock("fake player"), flexmock("fake scorekeeper"), nil }.should raise_error(ArgumentError, /dice can not be nil/)
   end
 
   it "should have zero score" do
-    turn = GreedGameTurn.new flexmock(:kind_of? => :Player), flexmock(:kind_of? => :ScoreKeeper), flexmock(:kind_of? => :DiceSet)
+    turn = GreedGameTurn.new flexmock("fake player"), flexmock("fake scorekeeper"), flexmock("fake dice")
     turn.score.should eql(0)
   end
 end
@@ -137,7 +133,7 @@ end
 describe GreedGameTurn, "when turn is being played" do
   before( :each ) do
     @io_device = flexmock("fake io device")
-    @scorekeeper = flexmock("fake scorekeeper", :kind_of? => :ScoreKeeper)    
+    @scorekeeper = flexmock("fake scorekeeper")
     @turn = GreedGameTurn.new(Player.new("tom"), @scorekeeper, DiceSet.new())
   end
 

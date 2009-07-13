@@ -3,7 +3,7 @@ class GreedGame
     raise ArgumentError, "IO device cannot be nil!" if io_device == nil
     raise ArgumentError, "IO device must respond to get_input!" if !io_device.respond_to? :get_input
     raise ArgumentError, "IO device must respond to write_output!" if !io_device.respond_to? :write_output
-    raise ArgumentError, "scorekeeper can not be nil and must be kind_of? ScoreKeeper!" if scorekeeper == nil || !scorekeeper.kind_of?(ScoreKeeper) 
+    raise ArgumentError, "scorekeeper can not be nil!" if scorekeeper == nil
 
     @io_device = io_device
     @scorekeeper = scorekeeper
@@ -18,7 +18,7 @@ Enter player #{@scorekeeper.players.length + 1} name:}
     while player_name != ""
       @scorekeeper.add_player(player_name.chomp)
       @io_device.write_output "Enter player #{@scorekeeper.players.length  + 1} name:"
-      player_name =  @io_device.get_input
+      player_name = @io_device.get_input
     end
   end
 
@@ -69,9 +69,9 @@ class GreedGameTurn
   attr_reader :score
 
   def initialize(player, scorekeeper, dice)
-    raise ArgumentError, "player can not be nil and must be kind_of? Player!" if player == nil || !player.kind_of?(Player)
-    raise ArgumentError, "scorekeeper can not be nil and must be kind_of? ScoreKeeper!" if scorekeeper == nil || !scorekeeper.kind_of?(ScoreKeeper)
-    raise ArgumentError, "dice can not be nil and must be kind_of? Dice!" if dice == nil || !dice.kind_of?(DiceSet)
+    raise ArgumentError, "player can not be nil!" if player == nil
+    raise ArgumentError, "scorekeeper can not be nil!" if scorekeeper == nil
+    raise ArgumentError, "dice can not be nil!" if dice == nil
 
     @score = 0
     @player = player
@@ -226,7 +226,7 @@ private
   end
 end
 
-class StandardIODevice
+class ConsoleIODevice
   def get_input
     gets.chomp
   end
