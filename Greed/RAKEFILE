@@ -1,0 +1,14 @@
+require 'rubygems'
+require ‘rake’
+require ‘spec/rake/spectask’
+
+
+#TODO: keep getting an invalid character error running this for some reason... Need to figure this out.
+
+#desc "Run all specs"
+#Spec::Rake::SpecTask.new(:spec) do |t|
+#  t.spec_files = FileList["specs/*.rb"]
+#  t.options = '-v'
+#end
+
+#task :default => :spec
