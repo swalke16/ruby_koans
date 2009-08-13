@@ -20,8 +20,7 @@ class GreedGameConsoleUI
     rescue ArgumentError => error
       write_line("")
       write_line(error)
-    end
-      
+    end      
   end
 
   def turn_starting(turn)

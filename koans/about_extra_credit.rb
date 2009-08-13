@@ -24,8 +24,8 @@
 # In the process of continuing my learning of ruby I've gone ahead and created a
 # greed v2 implementation that better separates out the UI concerns so that I can
 # at some point put some different interfaces (like a web UI) on top of it. I also
-# attempted to setup a more realistic project structure for the app as well as
-# adding a Rakefile to run all the specs... The Rakefile is not working at the moment.
+# setup a more realistic project structure for the app as well as
+# adding a Rakefile to run all the specs...
 #
 # The v2 version of the game is mostly finished (minus some TODO comments in the code)
 # and is fully playable from the console ui. It can be found in the <greed> folder at
