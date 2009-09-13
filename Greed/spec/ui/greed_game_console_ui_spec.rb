@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.join(File.expand_path(File.dirname(__FILE__)), "..", "spec_helper")
 
 describe GreedGameConsoleUI do
   context "when first created" do
@@ -70,7 +70,7 @@ describe GreedGameConsoleUI do
       @game_engine = flexmock("fake game engine")
       @game_ui = GreedGameConsoleUI.new(@game_engine)
     end
-  
+
     it "displays the status of the turn if the turn was a scoring turn" do
       turn = flexmock("fake turn")
       turn.should_receive("was_lost").and_return(false)

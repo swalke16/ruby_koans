@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/greed/diceset'
-require File.dirname(__FILE__) + '/greed/greed_game'
-require File.dirname(__FILE__) + '/greed/greed_game_turn'
-require File.dirname(__FILE__) + '/greed/player'
+require 'greed/diceset'
+require 'greed/greed_game'
+require 'greed/greed_game_turn'
+require 'greed/player'

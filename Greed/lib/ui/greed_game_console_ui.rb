@@ -1,10 +1,8 @@
 # TODO: create another UI on top
-# TODO: failing specs... 
-# TODO: is there a way to cleanup colors better so strings aren't so long?
-# TODO: notification of points not accumulating because of less < 300
 
 require 'rubygems'
 require 'highline'
+require 'greed'
 
 class GreedGameConsoleUI
 
@@ -23,7 +21,7 @@ class GreedGameConsoleUI
       display_game_summary()
     rescue ArgumentError => error
       @terminal.say("\n")
-      @terminal.say(error)
+      @terminal.say(%{<%= color("#{error}", :red) %>})
     end      
   end
 

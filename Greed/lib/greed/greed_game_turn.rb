@@ -1,3 +1,6 @@
+require 'greed/player'
+require 'greed/diceset'
+
 class GreedGameTurn
   attr_reader :score
   attr_reader :player

@@ -9,4 +9,11 @@ Spec::Rake::SpecTask.new(:spec) do |t|
   t.fail_on_error = false
 end
 
+desc "Play console game"
+task :play_console do
+  path = File.join(File.expand_path(File.dirname(__FILE__)), "greed_interactive_console.rb")
+  system("ruby #{path}")
+end
+
+
 task :default => :spec
