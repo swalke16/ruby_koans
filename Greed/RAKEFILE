@@ -16,4 +16,4 @@ task :play_console do
 end
 
 
-task :default => :spec
+task :default => :play_console
