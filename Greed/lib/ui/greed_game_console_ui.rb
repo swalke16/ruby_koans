@@ -7,7 +7,6 @@ require 'greed'
 class GreedGameConsoleUI
 
   def initialize(greed_game_engine)
-    raise ArgumentError, "Game engine cannot be nil!" if greed_game_engine == nil
     @game_engine = greed_game_engine
     @terminal = HighLine.new
   end
@@ -23,23 +22,6 @@ class GreedGameConsoleUI
       @terminal.say("\n")
       @terminal.say(%{<%= color("#{error}", :red) %>})
     end      
-  end
-
-  def player_wants_to_roll_again?(turn)
-    @terminal.agree(%{<%= color("#{turn.player.name}'s", :yellow) %> turn! In Game: <%= color('#{turn.player.in_game}', :yellow) %> Game Score: <%= color('#{turn.player.score}', :yellow) %> Turn Score: <%= color('#{turn.score}', :yellow) %>
-You have <%= color('#{turn.dice_left_to_roll}', :cyan) %> dice left to roll. Roll dice? <%= color('(y/n)', :cyan) %> }, true) do |q|
-        q.overwrite = true
-        q.echo      = false  # overwrite works best when echo is false.
-        q.character = true   # if this is set to :getc then overwrite does not work
-    end    
-  end
-
-  def turn_ending(turn)
-    if turn.was_lost
-      display_lost_turn()
-    else
-      display_turn_ending(turn)
-    end
   end
 
   def entering_final_round(leading_player)
@@ -71,17 +53,7 @@ private
 
     @terminal.say("\n")
 
-    return players.map {|name| Player.new(name)}
-  end
-
-  def display_lost_turn()
-    @terminal.say("<%= color('You rolled a zero so you lost your turn and any accumulated score for this turn.', :red) %>")
-    @terminal.say("\n")
-  end
-
-  def display_turn_ending(turn)
-    @terminal.say("Your turn has now ended! You scored a total of <%= color('#{turn.score}', :green) %> points for this turn!")
-    @terminal.say("\n")
+    return players.map {|name| ConsolePlayer.new(name, @terminal)}
   end
 
   def display_game_summary()

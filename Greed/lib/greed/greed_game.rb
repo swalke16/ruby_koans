@@ -1,5 +1,4 @@
 require 'greed/greed_game_turn'
-require 'greed/player'
 
 class GreedGame
   attr_reader :players
@@ -11,7 +10,6 @@ class GreedGame
   end
 
   def play(game_ui, players)
-    raise ArgumentError, "game_ui can not be nil!" if game_ui == nil
     @game_ui = game_ui
     raise(ArgumentError, "Two or more players are required to play the game!") if players == nil || players.length < 2
     @players = players
@@ -30,7 +28,7 @@ class GreedGame
 
   private
   def give_all_players_a_turn_unless (&skip_player)
-   @players.each {|player| player.play_turn(@dice, @game_ui) if !yield(player) }
+   @players.each {|player| player.play_turn(GreedGameTurn.new(@dice)) if !yield(player) }
   end
 
   def is_final_round?
