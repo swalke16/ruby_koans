@@ -4,7 +4,6 @@ class GreedGame
   attr_reader :players
 
   def initialize()
-    @dice = DiceSet.new
     @players = nil
     @game_ui = nil
   end
@@ -28,7 +27,7 @@ class GreedGame
 
   private
   def give_all_players_a_turn_unless (&skip_player)
-   @players.each {|player| player.play_turn(GreedGameTurn.new(@dice)) if !yield(player) }
+   @players.each {|player| player.play_turn(DiceSet.new(5)) if !yield(player) }
   end
 
   def is_final_round?

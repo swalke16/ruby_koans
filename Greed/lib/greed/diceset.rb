@@ -1,14 +1,20 @@
 class DiceSet
   attr_reader :values
   attr_reader :score
-  attr_reader :number_of_non_scoring
+  attr_reader :left_to_roll
 
-  def roll(n)
-    @values = n.is_a?(Enumerable) ? n.map {|i| i } : (1..n).map { rand(6) + 1 }
-    @score, @number_of_non_scoring =  calculate_score(values)
+  def initialize(number_of_dice)
+    @score = 0
+    @values = []
+    @left_to_roll = number_of_dice
   end
 
-private
+  def roll()
+    @values = (1..@left_to_roll).map { rand(6) + 1 }
+    @score, @left_to_roll =  calculate_score(values)
+    @left_to_roll = 0 if @score == 0
+  end
+
   def calculate_score(values)
     digit_counts = count_digits(values)
     digit_scores = digit_counts.inject({}){|h,(k,v)| h[k] = score_for_digit(k,v); h }
@@ -17,6 +23,7 @@ private
     return roll_score, non_scoring_count
   end
 
+private
   def count_digits(dice)
     digit_counts = Hash.new(0)
     dice.each{ |item| digit_counts[item] += 1 }

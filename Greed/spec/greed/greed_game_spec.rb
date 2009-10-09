@@ -1,13 +1,6 @@
 require File.join(File.expand_path(File.dirname(__FILE__)), "..", "spec_helper")
 
 describe GreedGame do 
-  context "when first created" do
-    it "is created" do
-      game = GreedGame.new
-      game.should_not be_nil
-    end
-  end
-
   context "when playing the game with less than two players" do
     it "raises an argument error" do
       game = GreedGame.new
@@ -31,15 +24,13 @@ describe GreedGame do
       @harry.should_receive(:score).and_return(0)
 
       @players = [@tom, @dick, @harry]
-      @turn = flexmock("fake turn")
-      flexmock(GreedGameTurn).should_receive(:new).and_return(@turn)
       @game = GreedGame.new
     end
 
     it "gives every player a turn to roll until a player has a winning score (>= 3000)" do
-      @tom.should_receive(:play_turn).once.with(@turn).ordered(:turns)
-      @dick.should_receive(:play_turn).twice.with(@turn).ordered(:turns)
-      @harry.should_receive(:play_turn).twice.with(@turn).ordered(:turns)
+      @tom.should_receive(:play_turn).once.with(DiceSet).ordered(:turns)
+      @dick.should_receive(:play_turn).twice.with(DiceSet).ordered(:turns)
+      @harry.should_receive(:play_turn).twice.with(DiceSet).ordered(:turns)
 
       @game.play(@game_ui, @players)
     end
@@ -49,19 +40,16 @@ describe GreedGame do
     before(:each) do
       @game_ui = flexmock("fake game ui")
       @game_ui.should_ignore_missing
-
-      @turn = flexmock("fake turn")
-      flexmock(GreedGameTurn).should_receive(:new).and_return(@turn)
-
+    
       @tom = flexmock("player tom")
       @tom.should_receive(:score).and_return(3175)
       @tom.should_receive(:play_turn).never
       @dick = flexmock("player dick")
       @dick.should_receive(:score).and_return(0)
-      @dick.should_receive(:play_turn).once.with(@turn).ordered(:turns)
+      @dick.should_receive(:play_turn).once.with(DiceSet).ordered(:turns)
       @harry = flexmock("player harry")
       @harry.should_receive(:score).and_return(0)
-      @harry.should_receive(:play_turn).once.with(@turn).ordered(:turns)
+      @harry.should_receive(:play_turn).once.with(DiceSet).ordered(:turns)
 
       @players = [@tom, @dick, @harry]
       @game = GreedGame.new

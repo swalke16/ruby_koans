@@ -24,5 +24,4 @@ class GreedGameTurn
       end
     end
   end
-
 end

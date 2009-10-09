@@ -53,7 +53,7 @@ private
 
     @terminal.say("\n")
 
-    return players.map {|name| ConsolePlayer.new(name, @terminal)}
+    return players.map {|name| GreedPlayer.new(name, HumanConsolePlayerStrategy.new(@terminal))}
   end
 
   def display_game_summary()

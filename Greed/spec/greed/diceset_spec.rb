@@ -1,20 +1,30 @@
 require File.join(File.expand_path(File.dirname(__FILE__)), "..", "spec_helper")
 
 describe DiceSet do
-  context "when first created" do
-    it "is created" do
-      @dice = DiceSet.new
-      @dice.should_not be_nil
+  context "when first created with N dice" do
+    it "has N dice left to roll" do
+      @dice = DiceSet.new(5)
+      @dice.left_to_roll.should eql(5)
+    end
+    
+    it "has a score of zero" do
+      @dice = DiceSet.new(5)
+      @dice.score.should eql(0)
+    end
+    
+    it "should have no values" do
+      @dice = DiceSet.new(5)
+      @dice.values.should eql([])
     end
   end
 
-  context "when rolling dice" do
+  context "when rolling N dice" do
     before(:each) do
-      @dice = DiceSet.new
+      @dice = DiceSet.new(5)
     end
 
-    it "values are a set of integers between 1 and 6 when passed a number" do
-      @dice.roll(5)
+    it "values are a set of N integers between 1 and 6" do
+      @dice.roll()
       @dice.values.should be_a(Array)
       @dice.values.should have(5).items
       @dice.values.each do |value|
@@ -22,107 +32,94 @@ describe DiceSet do
       end
     end
 
-    it "values are the set of numbers when passed an enumerable" do
-      @dice.roll([1,2,3])
-
-      @dice.values.should eql([1,2,3])
-    end
-
     it "does not change values unless rolled" do
-      @dice.roll(5)
+      @dice.roll()
       first_time = @dice.values
       second_time = @dice.values
       first_time.should eql(second_time)
     end
 
     it "changes values when dice are rolled"  do
-      @dice.roll(5)
+      @dice.roll()
       first_time = @dice.values
 
-      @dice.roll(5)
+      @dice.roll()
       second_time = @dice.values
 
       first_time.should_not eql(second_time)
     end
-
-    it "allows for rolling different numbers of dice" do
-      @dice.roll(3)
-      @dice.values.should have(3).items
-
-      @dice.roll(1)
-      @dice.values.should have(1).items
+    
+    it "does not change dice left to roll unless rolled" do
+      @dice.roll()
+      first_time = @dice.left_to_roll
+      second_time = @dice.left_to_roll
+      first_time.should eql(second_time)            
     end
-
+    
+    it "dice left to roll and score becomes zero for a roll of zero score" do
+      @dice.instance_eval do
+         @score = 50
+       end
+      @dice.score.should eql(50)
+      @dice = flexmock(@dice, :calculate_score=>[0,5])
+      @dice.roll()    
+      @dice.score.should eql(0)      
+      @dice.left_to_roll.should eql(0)
+    end
+    
+    it "does not change score unless rolled" do
+      @dice.roll()
+      first_time = @dice.score
+      second_time = @dice.score
+      first_time.should eql(second_time)
+    end
+  end
+  
+  context "when calculating score" do 
+    before(:each) do
+      @dice = DiceSet.new(0)
+    end
+    
     it "has zero score and zero non-scoring dice for empty roll" do
-      @dice.roll([])
-      @dice.score.should eql(0)
-      @dice.number_of_non_scoring.should eql(0)
+      @dice.calculate_score([]).should eql([0,0])
     end
 
     it "has a score of 50 and zero non-scoring dice for a roll of a single 5" do
-      @dice.roll([5])
-      @dice.score.should eql(50)
-      @dice.number_of_non_scoring.should eql(0)
+      @dice.calculate_score([5]).should eql([50,0])
     end
 
     it "has a score of 100 and zero non-scoring dice for a roll of a single 1" do
-      @dice.roll([1])
-      @dice.score.should eql(100)
-      @dice.number_of_non_scoring.should eql(0)
+      @dice.calculate_score([1]).should eql([100,0])
     end
 
     it "has a score of the sum of 1*n*100 + 5*n*50 and zero non-scoring dice for a roll of 1s and 5s" do
-      @dice.roll([1,5,5,1])
-      @dice.score.should eql(300)
-      @dice.number_of_non_scoring.should eql(0)
+      @dice.calculate_score([1,5,5,1]).should eql([300,0])
     end
 
     it "has a score of zero and four non-scoring dice for a roll of 2s,3s,4s, and 6s" do
-      @dice.roll([2,4,4,6])
-      @dice.score.should eql(0)
-      @dice.number_of_non_scoring.should eql(4)
+      @dice.calculate_score([2,4,4,6]).should eql([0,4])
     end
 
     it "has a score of 1000 and zero non-scoring dice for a roll of triple 1s" do
-      @dice.roll([1,1,1])
-      @dice.score.should eql(1000)
-      @dice.number_of_non_scoring.should eql(0)
+      @dice.calculate_score([1,1,1]).should eql([1000,0])
     end
 
     it "has a score of 100*digit and zero non-scoring dice for a roll of triple 2s, 3s, 4s, 5s, and 6s" do
-      @dice.roll([2,2,2])
-      @dice.score.should eql(200)
-      @dice.number_of_non_scoring.should eql(0)
-      @dice.roll([3,3,3])
-      @dice.score.should eql(300)
-      @dice.number_of_non_scoring.should eql(0)
-      @dice.roll([4,4,4])
-      @dice.score.should eql(400)
-      @dice.number_of_non_scoring.should eql(0)
-      @dice.roll([5,5,5])
-      @dice.score.should eql(500)
-      @dice.number_of_non_scoring.should eql(0)
-      @dice.roll([6,6,6])
-      @dice.score.should eql(600)
-      @dice.number_of_non_scoring.should eql(0)
+      @dice.calculate_score([2,2,2]).should eql([200,0])
+      @dice.calculate_score([3,3,3]).should eql([300,0])
+      @dice.calculate_score([4,4,4]).should eql([400,0])
+      @dice.calculate_score([5,5,5]).should eql([500,0])
+      @dice.calculate_score([6,6,6]).should eql([600,0])
     end
 
     it "has a score of the mixed sum and zero non-scoring dice for a roll of all scoring dice" do
-      @dice.roll([2,2,2,5,5])
-      @dice.score.should eql(300)
-      @dice.number_of_non_scoring.should eql(0)
-      @dice.roll([5,5,5,5])
-      @dice.score.should eql(550)
-      @dice.number_of_non_scoring.should eql(0)
+      @dice.calculate_score([2,2,2,5,5]).should eql([300,0])
+      @dice.calculate_score([5,5,5,5]).should eql([550, 0])
     end
 
     it "has a score of the mixed sum and N non-scoring dice for a roll with N non-scoring dice" do
-      @dice.roll([2,3,4,5,5])
-      @dice.score.should eql(100)
-      @dice.number_of_non_scoring.should eql(3)
-      @dice.roll([5,5,5,6,4])
-      @dice.score.should eql(500)
-      @dice.number_of_non_scoring.should eql(2)
+      @dice.calculate_score([2,3,4,5,5]).should eql([100,3])
+      @dice.calculate_score([5,5,5,6,4]).should eql([500,2])
     end
    end
 end
