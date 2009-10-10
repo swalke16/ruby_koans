@@ -8,15 +8,15 @@ describe HumanConsolePlayerStrategy do
     end
   
     it "returns true if the player typed a 'y'" do
-      @terminal.should_receive(:agree).with(/#{@player.name} has.*3.*dice left to roll. Roll dice?/, true, Proc).once.and_return(true)
+      @terminal.should_receive(:agree).with(/There are.*3.*dice left to roll. Roll dice?/, true, Proc).once.and_return(true)
   
       roll_again = @player_strategy.wants_to_roll_again?(@player, 50, 3)    
   
       roll_again.should eql(true)
     end
 
-    it "returnins false if the player typed a 'n'" do
-      @terminal.should_receive(:agree).with(/#{@player.name} has.*3.*dice left to roll. Roll dice?/, true, Proc).once.and_return(false)
+    it "returns false if the player typed a 'n'" do
+      @terminal.should_receive(:agree).with(/There are.*3.*dice left to roll. Roll dice?/, true, Proc).once.and_return(false)
   
       roll_again = @player_strategy.wants_to_roll_again?(@player, 50, 3)    
   

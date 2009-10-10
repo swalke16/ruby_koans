@@ -1,5 +1,3 @@
-require 'greed/greed_game_turn'
-
 class GreedGame
   attr_reader :players
 

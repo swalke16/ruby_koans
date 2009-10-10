@@ -10,12 +10,11 @@ class ConsolePlayerStrategy
   end
   
   def begin_turn(player)
-    @terminal.say("#{player.name}'s turn is beginning!")
-    @terminal.say("\n")
+    @terminal.say(%{<%= color("#{player.name}'s", :yellow) %> turn is beginning!})
   end
 
   def end_turn(player, turn_score)
-    @terminal.say("#{player.name}'s turn has now ended! #{player.name} scored a total of <%= color('#{turn_score}', :green) %> points for this turn!")
+    @terminal.say(%{<%= color("#{player.name}'s", :yellow) %> turn has now ended! #{player.name} scored a total of <%= color('#{turn_score}', :green) %> points for this turn!})
     @terminal.say("\n")
   end  
 end
