@@ -1,5 +1,4 @@
 describe HumanConsolePlayerStrategy do
-  
   context "when asking if a player wants to roll again" do
     before(:each) do
       @terminal = flexmock("fake terminal")
@@ -22,6 +21,5 @@ describe HumanConsolePlayerStrategy do
   
       roll_again.should eql(false)
     end
-  end
-  
+  end 
 end

@@ -39,6 +39,10 @@ private
   end
 
   def prompt_for_players()
+    prompt_for_human_players() + prompt_for_ai_players()
+  end
+
+  def prompt_for_human_players()
     @terminal.say("Please enter player names, or a blank name to stop creating players.")
 
     players = []
@@ -53,8 +57,15 @@ private
 
     @terminal.say("\n")
 
-    return players.map {|name| GreedPlayer.new(name, HumanConsolePlayerStrategy.new(@terminal))}
+    players.map {|name| GreedPlayer.new(name, HumanConsolePlayerStrategy.new(@terminal))}
   end
+  
+  def prompt_for_ai_players()
+    ai_player_count = @terminal.ask("How any computer players would you like to play the game? ", Integer)
+    @terminal.say("\n")    
+    
+    (1..ai_player_count).map {|i| GreedPlayer.new("AI_" + i.to_s, SimpleAIConsolePlayerStrategy.new(@terminal))}
+  end  
 
   def display_game_summary()
     @terminal.say("The game has now ended!")
@@ -65,7 +76,7 @@ private
        text << "<%= BLINK %><%= color(' <-- WINNER!', :magenta) %><%= CLEAR %>" if player == winning_player
        text << "\n"
     end
-    
+
     @terminal.say(summary)
     @terminal.say("\n")
   end
