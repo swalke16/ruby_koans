@@ -1,5 +1,5 @@
-$:.unshift File.join(File.expand_path(File.dirname(__FILE__)), "lib")
+$LOAD_PATH << File.join(File.dirname(__FILE__), "lib")
 require 'greed_console'
 
-game_ui = GreedGameConsoleUI.new(GreedGame.new())
+game_ui = Greed::UI::Console.new(Greed::Game.new())
 game_ui.play()
