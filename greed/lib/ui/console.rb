@@ -62,10 +62,13 @@ module Greed
       end
   
       def prompt_for_ai_players()
-        ai_player_count = @terminal.ask("How any computer players would you like to play the game? ", Integer)
+        ai_player_count = @terminal.ask("How any computer players would you like to play the game? ", Integer) do |q|
+          q.validate = lambda { |p| p.to_i >= 0 }
+          q.responses[:not_valid] = "0 is the minumum number of allowed computer players!"
+        end
         @terminal.say("\n")    
     
-        (1..ai_player_count).map {|i| Greed::Players::Player.new("AI_" + i.to_s, Greed::Players::SimpleAIConsolePlayerStrategy.new(@terminal))}
+        (1..ai_player_count).map {|i| Greed::Players::Player.new("Computer #" + i.to_s, Greed::Players::SimpleAIConsolePlayerStrategy.new(@terminal))}
       end  
 
       def display_game_summary()

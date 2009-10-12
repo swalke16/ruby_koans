@@ -15,7 +15,7 @@ module Greed
 
         def SetupPlayers(ai_count, *player_names)
           @terminal.should_receive(:ask).times(player_names.length).with(/Enter player/).and_return(*player_names)
-          @terminal.should_receive(:ask).once.with(/How any computer players would you like to play the game?/, Integer).and_return(ai_count)      
+          @terminal.should_receive(:ask).once.with(/How any computer players would you like to play the game?/, Integer, Proc).and_return(ai_count)      
         end
 
         it "prompts for human player names until no names entered" do
@@ -38,7 +38,7 @@ module Greed
       
           @game_engine.
             should_receive(:play).
-            with(@game_ui, FlexMock.on {|arg| arg.length == 4 && arg[0].name == "tom" && arg[1].name == "dick" && arg[2].name == "harry" && arg[3].name == "AI_1"})
+            with(@game_ui, FlexMock.on {|arg| arg.length == 4 && arg[0].name == "tom" && arg[1].name == "dick" && arg[2].name == "harry" && arg[3].name == "Computer #1"})
 
           @game_ui.play()
         end
