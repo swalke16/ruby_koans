@@ -25,14 +25,14 @@ module Greed
           @game_ui.play()
         end
     
-        it "prompts for the count of AI players in the game" do
+        it "prompts for the count of computer players in the game" do
           SetupPlayers(1, "")
           @terminal.should_ignore_missing
 
           @game_ui.play()
         end
 
-        it "plays the game with the combination of human and AI players that were entered"  do
+        it "plays the game with the combination of human and computer players that were entered"  do
           SetupPlayers(1, "tom", "dick", "harry", "")
           @terminal.should_ignore_missing
       
