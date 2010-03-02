@@ -1,6 +1,0 @@
-require 'greed/diceset'
-require 'greed/game'
-require 'greed/console_player_strategy'
-require 'greed/human_console_player_strategy'
-require 'greed/simple_ai_console_player_strategy'
-require 'greed/player'
